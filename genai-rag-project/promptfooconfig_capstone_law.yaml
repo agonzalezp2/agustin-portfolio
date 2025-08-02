@@ -1,0 +1,283 @@
+# Learn more about building a configuration: https://promptfoo.dev/docs/configuration/guide
+description: "Starter promptfoo testing configuration for Capstone RAG. This will call rag_test_driver_anthropic.py to call our RAG solution"
+
+prompts:
+  - "{{topic}}"
+  
+
+providers:
+  # - exec:python rag_test_driver_anthropic.py llm_option_one prompt_option_three
+  # - exec:python rag_test_driver_anthropic.py llm_option_two prompt_option_three
+  # - exec:python rag_test_driver_anthropic.py llm_option_three prompt_option_three
+  - exec:python rag_test_driver_anthropic.py llm_option_one prompt_option_one
+  - exec:python rag_test_driver_anthropic.py llm_option_one prompt_option_two
+  - exec:python rag_test_driver_anthropic.py llm_option_one prompt_option_three
+  
+tests:
+
+  - vars:
+      topic: What is required to report cash transactions over $10,000?
+    assert:
+      - type: icontains
+        value: Form 8300
+        metric: Form8300Mentioned
+      - type: icontains
+        value: IRS
+        metric: IRSReference
+      - type: llm-rubric
+        value: "Response should specify that cash transactions over $10,000 require filing Form 8300 with the IRS."
+        provider: anthropic:messages:claude-3-haiku-20240307
+        metric: CashTransactionThreshold
+
+  - vars:
+      topic: What qualifies as 'cash' under Form 8300 reporting?
+    assert:
+      - type: icontains-all
+        value: 
+          - "currency"
+          - "cashier"
+          - "check"
+      - type: llm-rubric
+        value: "Response should explain that cash includes currency, cashier's checks (with limits), and not personal checks."
+        provider: anthropic:messages:claude-3-haiku-20240307
+      # - type: cost
+      #   threshold: 0.01
+      - type: latency
+        threshold: 200
+
+  - vars:
+      topic: Are there any exceptions to filing Form 8300?
+    assert:
+      - type: icontains
+        value: "Exceptions"
+      - type: llm-rubric
+        value: "The answer should detail exceptions for certain transactions and entities."
+        provider: anthropic:messages:claude-3-haiku-20240307
+      # - type: cost
+      #   threshold: 0.01
+      - type: latency
+        threshold: 200
+
+  - vars:
+      topic: How are related transactions defined for Form 8300? - relevance
+      query: How are related transactions defined for Form 8300?
+      context: capstone_rag_anthropic.py
+    assert:
+      # - type: icontains-any
+      #   value: 
+      #     - "24-hour period"
+      #     - "24 hour period"
+      # - type: cost
+      #   threshold: 0.01
+      # - type: latency
+      #   threshold: 200
+
+      - type: factuality
+        value: related transactions are defined as any transactions between a buyer (or their agent) and a seller that occur within a 24-hour period
+        #provider: voyage:voyage-3
+        metric: RAGAS-factuality
+      - type: answer-relevance
+        threshold: 0.8
+        #provider: voyage:voyage-3
+        metric: RAGAS-answer-relevance
+      - type: context-relevance
+        threshold: 0.8
+        metric: RAGAS-context-relevance
+
+  - vars:
+      topic: How are related transactions defined for Form 8300? - faithfulness and recall
+      query: How are related transactions defined for Form 8300?
+      context: capstone_rag_anthropic.py
+    assert:
+      # - type: icontains-any
+      #   value: 
+      #     - "24-hour period"
+      #     - "24 hour period"
+      # - type: cost
+      #   threshold: 0.01
+      # - type: latency
+      #   threshold: 200
+
+      - type: context-recall
+        threshold: 0.8
+        value: related transactions are defined as any transactions between a buyer (or their agent) and a seller that occur within a 24-hour period
+        #provider: voyage:voyage-3
+        metric: RAGAS-context-recall
+      - type: context-faithfulness
+        #provider: voyage:voyage-3
+        threshold: 0.8
+        metric: RAGAS-context-faithfulness
+
+      # - type: llm-rubric
+      #   value: "Response should explain transactions within a 24-hour period may be treated as related."
+      #   provider: anthropic:messages:claude-3-haiku-20240307
+        
+
+  - vars:
+      topic: What penalties apply if Form 8300 is not filed?
+    assert:
+      - type: icontains-any
+        value: 
+          - "civil penalties"
+          - "criminal penalties"
+      - type: llm-rubric
+        value: "Answer should mention penalties, including potential fines and imprisonment."
+        provider: anthropic:messages:claude-3-haiku-20240307
+
+  - vars:
+      topic: What information is needed when filling out Form 8300?
+    assert:
+      # - type: contains-any
+      #   value: 
+      #     - "name"
+      #     - "address"
+      #     - "TIN"
+      - type: llm-rubric
+        value: "The response should specify necessary information like names, addresses, and TIN."
+        provider: anthropic:messages:claude-3-haiku-20240307
+
+  - vars:
+      topic: What is a designated reporting transaction under Form 8300?
+    assert:
+      # - type: icontains
+      #   value: "retail sale, durable goods"
+      - type: llm-rubric
+        value: "Response should define 'designated reporting transaction' including retail sales over $10,000."
+        provider: anthropic:messages:claude-3-haiku-20240307
+
+
+
+
+  # - vars:
+  #     topic: Do installment payments over $10,000 need to be reported?
+  #   assert:
+  #     - type: icontains
+  #       value: "total cash received within 1 year"
+  #     - type: llm-rubric
+  #       value: "Answer should clarify that cumulative payments exceeding $10,000 within one year require filing."
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: What qualifies as a suspicious transaction under Form 8300 rules?
+  #   assert:
+  #     - type: icontains
+  #       value: "suspicious, illegal"
+  #     - type: llm-rubric
+  #       value: "Response should indicate suspicious behavior, such as avoiding the form, can be reported voluntarily."
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: Can Form 8300 be filed electronically?
+  #   assert:
+  #     - type: icontains
+  #       value: "BSA E-Filing System"
+  #     - type: llm-rubric
+  #       value: "Response should mention electronic filing availability through the FinCEN BSA E-Filing System."
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+
+
+
+
+
+  # # p15
+  # - vars:
+  #     topic: Can I use a credit card for federal tax deposits?
+  #   assert:
+  #     - type: icontains
+  #       value: "Don't use a credit or debit card to make federal tax deposits"
+
+  # - vars:
+  #     topic: Is there a penalty if I don't have an EIN when filing?
+  #   assert:
+  #     - type: icontains
+  #       value: "penalty"
+  #     - type: llm-rubric
+  #       value: ensure that the output includes a consequence for missing EIN
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: Where can I find information on e-filing Forms W-2?
+  #   assert:
+  #     - type: icontains
+  #       value: SSA.gov/employer
+
+  # - vars:
+  #     topic: Can I set up an installment agreement for my employment taxes?
+  #   assert:
+  #     - type: icontains
+  #       value: "Online payment agreement" #  too broad
+  #     - type: llm-rubric
+  #       value: confirm guidance on installment options
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: How do I verify my new employee's work eligibility?
+  #   assert:
+  #     - type: icontains
+  #       value: Form I-9
+
+  # - vars:
+  #     topic: How can I avoid penalties for failing to deposit taxes on time?
+  #   assert:
+  #     - type: icontains
+  #       value: EFTPS
+  #     - type: llm-rubric
+  #       value: output should suggest timely deposits or IRS electronic options
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+  #     - type: cost
+  #       threshold: 0.01
+  #     -type: latency
+  #       threshold: 200
+
+  # - vars:
+  #     topic: Is there a separate tax for nonpayroll income withholding?
+  #   assert:
+  #     - type: icontains
+  #       value: Form 945
+
+  # - vars:
+  #     topic: Are there resources available in Spanish?
+  #   assert:
+  #     - type: icontains
+  #       value: Spanish
+  #     - type: llm-rubric
+  #       value: ensure that the answer specifies resource availability in Spanish
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+        
+  # #P1212
+  # - vars:
+  #     topic: How do I report OID income on my tax return?
+  #   assert:
+  #     - type: icontains
+  #       value: "Form 1099-OID"
+  #     - type: llm-rubric
+  #       value: ensure the output specifies how OID should be reported on tax returns
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: What should I do if I didn’t receive a Form 1099-OID?
+  #   assert:
+  #     - type: icontains
+  #       value: "Form 1099-OID not received"
+  #     - type: llm-rubric
+  #       value: ensure the answer addresses steps if Form 1099-OID was not received
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: How can brokers use the OID tables for reporting?
+  #   assert:
+  #     - type: icontains
+  #       value: "OID tables"
+  #     - type: llm-rubric
+  #       value: confirm that the answer explains OID tables' use for brokers and reporting requirements
+  #       provider: anthropic:messages:claude-3-haiku-20240307
+
+  # - vars:
+  #     topic: What is the de minimis rule for OID?
+  #   assert:
+  #     - type: icontains
+  #       value: "de minimis rule"
+  #     - type: llm-rubric
+  #       value: confirm that the output provides details on the threshold for OID under the de minimis rule
+  #       provider: anthropic:messages:claude-3-haiku-20240307
