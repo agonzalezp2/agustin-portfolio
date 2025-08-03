@@ -20,6 +20,10 @@ Developed a performance and retention score using engagement data across the use
 ### 🔹 RubiCo Urban Mobility Analytics *(coming soon)*
 IoT + geo-analytics project using smart cycling telemetry data to map urban infrastructure gaps. Built data pipeline and visual insights.
 
+### 🔹 Natural Language Inference *(UCL)*
+Analysed the performance of Natural Language Inference (NLI) models, using the MultiNLI corpus. We evaluated various encoder types: LSTM, BiLSTM, BiGRU, Self-Attention, and **BERT**.
+
+
 ### 🔹 MSc Thesis: Spatiotemporal Causal Inference *(UCL)*
 Causal modeling applied to geographic data over time. Focused on intervention effects and Bayesian inference.
 
