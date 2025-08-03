@@ -14,13 +14,10 @@ Built a Retrieval-Augmented Generation pipeline using **LangChain**, **AWS Bedro
 ### 🔹 Analytics Lakehouse *(coming soon)*
 Designed a centralized Medallion analytics architecture using **MS Fabric**, **Azure ADF**, and **Spark**. Improved efficiency and enabled client-facing metrics and retention KPIs.
 
-### 🔹 RubiCo Urban Mobility Analytics *(coming soon)*
-IoT + geo-analytics project using smart cycling telemetry data to map urban infrastructure gaps. Built data pipeline and visual insights.
-
 ### 🔹 [Natural Language Inference *(UCL)*](https://github.com/agonzalezp2/agustin-portfolio/tree/54ecc0082869d3a0f28c86e9342aa707d50e0abe/%20nli-infersent-vs-bert)
 Analysed the performance of Natural Language Inference (NLI) models, using the MultiNLI corpus. We evaluated various encoder types: LSTM, BiLSTM, BiGRU, Self-Attention, and **BERT**.
 
-### 🔹 MSc Thesis: Spatiotemporal Causal Inference *(UCL)*
+### 🔹 [MSc Thesis: Spatiotemporal Causal Inference *(UCL)*](https://github.com/agonzalezp2/agustin-portfolio/tree/1beea1049e7849197ef61352aba43a2c47ffbfab/causal-spatiotemporal-inference-lscm)
 Causal modeling applied to geographic data over time. Focused on intervention effects and Bayesian inference.
 
 ---
