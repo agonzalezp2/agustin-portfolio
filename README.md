@@ -47,7 +47,6 @@ English 🇬🇧 | Spanish 🇪🇸 | French 🇫🇷 *(All native fluency)*
 
 - [LinkedIn](https://www.linkedin.com/in/agustin-gonzalez-pozo)  
 - [GitHub](https://github.com/agonzalezp2)  
-- [CV](https://drive.google.com/file/d/12HBJZU_O7ju5oTv0IQaA3Z8nYAJrCg8K/view)
 
 ---
 
